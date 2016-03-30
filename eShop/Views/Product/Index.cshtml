@@ -1,0 +1,39 @@
+﻿@model  List<eShop.Models.CategoryModel>
+@{
+    ViewBag.Title = "Product Page";
+}
+
+@section Products{
+
+    <li class="product detail">
+        <img src="@ViewBag.Product.Image" alt="@ViewBag.Product.Name" />
+        <div class="info">
+            <h2>@ViewBag.Product.Name </h2>
+            <p class="price">Цена: @ViewBag.Product.Price грн</p>
+            <ul class="characteristcs">
+                @foreach (var characteristic in ViewBag.characteristics)
+                {
+                    if (@characteristic.Value != "")
+                    {
+                        <li>@characteristic.Name: <span>@characteristic.Value см.</span></li>
+                    }
+                }
+            </ul>
+            <a class="basket" id="AddtoBasket" href="@Url.Action("Index", "AddToBasket", new {id = @ViewBag.Product.Id})">В корзину</a>
+        </div>
+        <div class="relax"></div>
+        <div class="description">
+            <h3>Описание товра</h3>
+            <p>@Html.Raw(ViewBag.Product.Description)</p>
+        </div>
+    </li>
+}
+
+@section breadcrumbs{
+    <div class="breadcrumbs">
+        <ul>
+            <li><a href="@Url.Action("", "Home")">Главная</a></li>
+            <li><a href="@Url.Action("CategoryProduct", "", new { id = @ViewBag.category.Id })">@ViewBag.category.Name</a></li>
+        </ul>
+    </div>
+}

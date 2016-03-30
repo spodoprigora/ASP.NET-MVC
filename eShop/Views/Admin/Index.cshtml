@@ -1,0 +1,691 @@
+﻿@model  List<eShop.Models.getOrderList>
+            
+    @{
+        ViewBag.Title = "Admin";
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+
+    @{
+    var activetabId = string.Empty;
+    var activelinkIndex = default(int);
+    switch ((int)ViewBag.TabIndex)
+        {
+            case 1:
+            default:
+                activelinkIndex = 0;
+                activetabId = "tab1";
+                break;
+            case 2:
+                activelinkIndex = 1;
+                activetabId = "tab2";
+                break;
+
+            case 3:
+                activelinkIndex = 2;
+                activetabId = "tab3";
+                break;
+        }
+    }
+    <h2>ADMIN</h2>
+    <ul class="tabs">
+        <li class="@(activelinkIndex == 0 ? "active" : "")"><a href="#tab1">ЗАКАЗЫ</a></li>
+        <li class="@(activelinkIndex == 1 ? "active" : "")"><a href="#tab2">ТОВАРЫ</a></li>
+        <li class="@(activelinkIndex == 2 ? "active" : "")"><a href="#tab3">КАТЕГОРИИ</a></li>
+    </ul>
+    <div class="relax"></div>
+    <section class="block">
+        @*Заказы--------------------------------------------------------------------------*@
+        <article id="tab1" class="@(activetabId == "tab1"?"active": "hide")">
+            <section class="filter">
+                @using (Html.BeginForm("orderFiltr", "Admin", FormMethod.Get))
+                {
+                    int count = 1;
+
+                    <select name="status" class="sel">
+                        <option value="0">--ВСЕ--</option>
+                        @foreach (string str in ViewBag.status)
+                        {
+                            if (ViewBag.orderFiltrStatus == @count)
+                            {
+                                <option value="@count" selected>@str</option>
+                            }
+                            else
+                            {
+                                <option value="@count">@str</option>
+                            }
+                            count++;
+                        }
+                    </select>
+                    <label for="date-1">C</label>
+                    <input name="startDate" class="datepicker" id="date-1" type="text" value="@ViewBag.orderFiltrStartDate" />
+                    <label for="date-2">По</label>
+                    <input name="endDate" class="datepicker" id="date-2" type="text" value="@ViewBag.orderFilterEndDate" />
+                    <input type="submit" value="применить" />
+                    <a href="@Url.Action("filtrReset", "Admin")">Сбросить</a>
+                }
+            </section>
+            <table>
+                <tr>
+                    <th>№</th>
+                    <th>Имя</th>
+                    <th>Телефон</th>
+                    <th>Дата заказа</th>
+                    <th>Статус</th>
+                    <th>Изменен</th>
+                    <th>Стоимость</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                @foreach (eShop.Models.getOrderList Order in Model)
+                {
+                    int count = 1;
+                    if (ViewBag.selectId != null && ViewBag.selectId == @Order.Id)
+                    {
+                        <tr class="selected">
+                            <td>@Order.Id</td>
+                            <td>@Order.Name</td>
+                            <td>@Order.Tell</td>
+                            <td>@Order.Orderdate</td>
+                            <td>
+                                @using (Html.BeginForm("Status", "Admin", FormMethod.Get))
+                                {
+                                    <select name="status" class="sel" onchange="this.form.submit()">
+                                        @foreach (string str in ViewBag.status)
+                                        {
+                                            if (@str == @Order.Status)
+                                            {
+                                                <option value="@count" selected>@str</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@count">@str</option>
+                                            }
+                                            count++;
+                                        }
+                                    </select>
+                                    <input type="hidden" name="id" value="@Order.Id" />
+                                }
+                            </td>
+                            <td>@Order.ChangeStatusDate</td>
+                            <td>@Order.Price</td>
+                            <td><a href="@Url.Action("Index", "Admin", new {id = @Order.Id, userId = @Order.UserId})">Больше</a></td>
+                            <td>
+                                @using (Html.BeginForm("comments", "Admin", FormMethod.Get))
+                                {
+                                    <input type="hidden" name="id" value="@Order.Id" />
+                                    <textarea name="coment" onchange="this.form.submit()">@Order.comments</textarea>
+                                }
+                            </td>
+
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>@Order.Id</td>
+                            <td>@Order.Name</td>
+                            <td>@Order.Tell</td>
+                            <td>@Order.Orderdate</td>
+                            <td>
+                                @using (Html.BeginForm("Status", "Admin", FormMethod.Get))
+                                {
+                                    <select name="status" class="sel" onchange="this.form.submit()">
+                                        @foreach (string str in ViewBag.status)
+                                        {
+                                            if (@str == @Order.Status)
+                                            {
+                                                <option value="@count" selected>@str</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@count">@str</option>
+                                            }
+                                            count++;
+                                        }
+                                    </select>
+                                    <input type="hidden" name="id" value="@Order.Id" />
+                                }
+                            </td>
+                            <td>@Order.ChangeStatusDate</td>
+                            <td>@Order.Price</td>
+                            <td><a href="@Url.Action("Index", "Admin", new { id = @Order.Id, userId = @Order.UserId })">Больше</a></td>
+                            <td>
+                                @using (Html.BeginForm("comments", "Admin", FormMethod.Get))
+                                {
+                                    <input type="hidden" name="id" value="@Order.Id" />
+                                    <textarea name="coment" onchange="this.form.submit()">@Order.comments</textarea>
+                                }
+                            </td>
+
+                        </tr>
+                    }
+                }
+            </table>
+            @*пейджинг---------------------------------------------------------------------*@
+
+            <div class="pages">
+                <ul>
+                    @if (ViewBag.OrderCurentPage == 0) //первый
+                    {
+                        if (@ViewBag.OrderPageCount == 1)
+                        {
+                            <li class="curent"><a href="@Url.Action("Index", "Admin", new { Opage = 0, tabIndex = 1 })">1</a></li>
+                        }
+                        else if (@ViewBag.OrderPageCount == 2)
+                        {
+                            <li class="curent"><a href="@Url.Action("Index", "Admin", new { Opage = 0, tabIndex = 1 })">1</a></li>
+                            <li><a href="@Url.Action("Index", "Admin", new { Opage = 1, tabIndex = 1 })">2</a></li>
+                        }
+                        else if (@ViewBag.OrderPageCount == 3)
+                        {
+                            <li class="curent"><a href="@Url.Action("Index", "Admin", new { Opage = 0, tabIndex = 1 })">1</a></li>
+                            <li><a href="@Url.Action("Index", "Admin", new { Opage = 1, tabIndex = 1 })">2</a></li>
+                            <li><a href="@Url.Action("Index", "Admin", new { Opage = @ViewBag.OrderPageCount - 1, tabIndex = 1 })">@ViewBag.OrderPageCount</a></li>
+                        }
+                        else if (@ViewBag.OrderPageCount > 3)
+                        {
+                            <li class="curent"><a href="@Url.Action("Index", "Admin", new { Opage = 0, tabIndex = 1 })">1</a></li>
+                            <li><a href="@Url.Action("Index", "Admin", new { Opage = 1, tabIndex = 1 })">2</a></li>
+                            <li class="point">. . .</li>
+                            <li><a href="@Url.Action("Index", "Admin", new { Opage = @ViewBag.OrderPageCount - 1, tabIndex = 1 })">@ViewBag.OrderPageCount</a></li>
+                        }
+                    }
+                    @if (ViewBag.OrderCurentPage == 1) //второй
+                    {
+                        if (@ViewBag.OrderPageCount == 2)
+                        {
+                            <li><a href="@Url.Action("Index", "Admin", new { Opage = 0, tabIndex = 1 })">1</a></li>
+                            <li class="curent"><a href="@Url.Action("Index", "Admin", new { Opage = 1, tabIndex = 1 })">2</a></li>
+                        }
+                        else if (@ViewBag.OrderPageCount == 3)
+                        {
+                            <li><a href="@Url.Action("Index", "Admin", new { Opage = 0, tabIndex = 1 })">1</a></li>
+                            <li class="curent"><a href="@Url.Action("Index", "Admin", new { Opage = 1, tabIndex = 1 })">2</a></li>
+                            <li><a href="@Url.Action("Index", "Admin", new { Opage = @ViewBag.OrderPageCount - 1, tabIndex = 1 })">@ViewBag.OrderPageCount</a></li>
+                        }
+                        else if (@ViewBag.OrderPageCount == 4)
+                        {
+                            <li><a href="@Url.Action("Index", "Admin", new { Opage = 0, tabIndex = 1 })">1</a></li>
+                            <li class="curent"><a href="@Url.Action("Index", "Admin", new { Opage = 1, tabIndex = 1 })">2</a></li>
+                            <li><a href="@Url.Action("Index", "Admin", new { Opage = 2, tabIndex = 1 })">3</a></li>
+                            <li><a href="@Url.Action("Index", "Admin", new { Opage = 3, tabIndex = 1 })">4</a></li>
+                        }
+                        else if (@ViewBag.OrderPageCount > 4)
+                        {
+                            <li><a href="@Url.Action("Index", "Admin", new { Opage = 0, tabIndex = 1 })">1</a></li>
+                            <li class="curent"><a href="@Url.Action("Index", "Admin", new { Opage = 1, tabIndex = 1 })">2</a></li>
+                            <li><a href="@Url.Action("Index", "Admin", new { Opage = 2, tabIndex = 1 })">3</a></li>
+                            <li class="point">. . .</li>
+                            <li><a href="@Url.Action("Index", "Admin", new { Opage = @ViewBag.OrderPageCount - 1, tabIndex = 1 })">@ViewBag.OrderPageCount</a></li>
+                        }
+                    }
+                    @if (ViewBag.OrderCurentPage >= 2 && ViewBag.OrderCurentPage <= @ViewBag.OrderPageCount - 3) //серидина
+                    {
+                        <li><a href="@Url.Action("Index", "Admin", new { Opage = 0, tabIndex = 1 })">1</a></li>
+                        if (ViewBag.OrderCurentPage > 2)
+                        {
+                            <li class="point">. . .</li>
+                        }
+                        <li><a href="@Url.Action("Index", "Admin", new { Opage = @ViewBag.OrderCurentPage - 1, tabIndex = 1 })">@ViewBag.OrderCurentPage</a></li>
+                        int cur = (int)@ViewBag.OrderCurentPage + 1;
+                        <li class="curent"><a href="@Url.Action("Index", "Admin", new { Opage = @ViewBag.OrderCurentPage, tabIndex = 1 })">@cur</a></li>
+                        int next = (int)@ViewBag.OrderCurentPage + 2;
+                        <li><a href="@Url.Action("Index", "Admin", new { Opage = @ViewBag.OrderCurentPage + 1, tabIndex = 1 })">@next</a></li>
+                        if (@ViewBag.OrderCurentPage < (@ViewBag.OrderPageCount - 3))
+                        {
+                            <li class="point">. . .</li>
+                        }
+                        <li><a href="@Url.Action("Index", "Admin", new { Opage = @ViewBag.OrderPageCount - 1, tabIndex = 1 })">@ViewBag.OrderPageCount</a></li>
+                    }
+
+                    @if (@ViewBag.OrderCurentPage == @ViewBag.OrderPageCount - 2 && @ViewBag.OrderPageCount > 3) //предпоследний
+                    {
+                        <li><a href="@Url.Action("Index", "Admin", new { Opage = 0, tabIndex = 1 })">1</a></li>
+                        <li class="point">. . .</li>
+                        int last = (int)ViewBag.OrderPageCount - 2;
+                        if (last != 2)
+                        {
+                            <li><a href="@Url.Action("Index", "Admin", new { Opage = @ViewBag.OrderPageCount - 3, tabIndex = 1 })">@last</a></li>
+                        }
+
+                        int cur = (int)ViewBag.OrderPageCount - 1;
+                        <li class="curent"><a href="@Url.Action("Index", "Admin", new { Opage = @ViewBag.OrderPageCount - 2, tabIndex = 1 })">@cur</a></li>
+                        <li><a href="@Url.Action("Index", "Admin", new { Opage = @ViewBag.OrderPageCount - 1, tabIndex = 1 })">@ViewBag.OrderPageCount</a></li>
+                    }
+
+                    @if (@ViewBag.OrderCurentPage == @ViewBag.OrderPageCount - 1 && @ViewBag.OrderPageCount != 1 && @ViewBag.OrderPageCount != 2) //последний
+                    {
+                        <li><a href="@Url.Action("Index", "Admin", new { Opage = 0, tabIndex = 1 })">1</a></li>
+                        if (@ViewBag.OrderPageCount > 3)
+                        {
+                            <li class="point">. . .</li>
+                        }
+
+                        int last = (int)ViewBag.OrderPageCount - 1;
+                        <li><a href="@Url.Action("Index", "Admin", new { Opage = @ViewBag.OrderPageCount - 2, tabIndex = 1 })">@last</a></li>
+                        <li class="curent"><a href="@Url.Action("Index", "Admin", new { Opage = @ViewBag.OrderPageCount - 1, tabIndex = 1 })">@ViewBag.OrderPageCount</a></li>
+                    }
+                </ul>
+            </div>
+
+            @*пейджинг---------------------------------------------------------------------*@
+
+            @if (ViewBag.Details != null)
+            {
+                <div class="detail">
+                    <table class="products">
+                        <tr>
+                            <th>
+                                <p>Фото</p>
+                            </th>
+                            <th>
+                                <p>Название</p>
+                            </th>
+                            <th>
+                                <p>Цена</p>
+                            </th>
+                            <th>
+                                <p>Коичество</p>
+                            </th>
+                            <th>
+                                <p>Сумма</p>
+                            </th>
+                        </tr>
+                        @foreach (var Product in ViewBag.Details)
+                        {
+                            <tr class="prod">
+                                <td><img src="@Product.image" alt="@Product.name" width="90" /></td>
+                                <td class="prodName">@Product.name</td>
+                                <td>@Product.price грн.</td>
+                                <td>@Product.count</td>
+                                <td>@(Product.price * Product.count) грн.</td>
+                            </tr>
+                        }
+                    </table>
+                    <div class="summa">
+                        <h5>Cумма вашего заказа @ViewBag.Sum грн.</h5>
+                    </div>
+                </div>
+            }
+            @if (ViewBag.user != null)
+            {
+                <div class="user">
+                    <h2>@ViewBag.user.Name</h2>
+                    <h2>@ViewBag.user.FirstName</h2>
+                    <p>тел: @ViewBag.user.PhoneNumber</p>
+                    <p>@ViewBag.user.Adress</p>
+                    <p>@ViewBag.user.Email</p>
+                </div>
+            }
+        </article>
+        @*/Заказы--------------------------------------------------------------------------*@
+
+        @*Товары--------------------------------------------------------------------------*@
+        <article id="tab2" class="@(activetabId == "tab2"?"active": "hide")">
+            <section class="filter">
+                @using (Html.BeginForm("productFiltr", "Admin", FormMethod.Get))
+                {
+                    <select name="categoryId" class="sel">
+                        <option value="0">--ВСЕ--</option>
+                        @foreach (eShop.Models.CategoryModel objCat in ViewBag.Category)
+                        {
+                            if (ViewBag.productFiltrCategory == @objCat.Id)
+                            {
+                                <option value="@objCat.Id" selected>@objCat.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@objCat.Id">@objCat.Name</option>
+                            }
+                        }
+                    </select>
+                    <label for="date-1">Активный</label>
+
+                    if (ViewBag.productFiltrActive != null && ViewBag.productFiltrActive == "true")
+                    {
+                        <input type="checkbox" name="active" value="true" id="act" checked />
+                        <input type="checkbox" name="flag" value="true" id="flag" checked style="display: none" />
+                    }
+                    else if (ViewBag.productFiltrActive != null && ViewBag.productFiltrActive == "false")
+                    {
+                        <input type="checkbox" name="active" value="false" id="act" />
+                        <input type="checkbox" name="flag" value="true" id="flag" checked style="display: none" />
+                    }
+                    else
+                    {
+                        <input type="checkbox" name="active" value="true" id="act" />
+                        <input type="checkbox" name="flag" value="true" id="flag" style="display: none" />
+                    }
+                    <input type="submit" value="применить" />
+                    <a href="@Url.Action("productFiltrReset", "Admin")" id="reset">Сбросить</a>
+                }
+            </section>
+
+            <h3>Товары</h3>
+            <table>
+                <tr>
+                    <th>Ид</th>
+                    <th>Категория</th>
+                    <th>Фото</th>
+                    <th>Название</th>
+                    <th>Описание</th>
+                    <th>Цена</th>
+                    <th>Активный</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                @foreach (eShop.Models.editProduct obj in ViewBag.editProducts)
+                {
+                    if (ViewBag.editProdId != null && obj.Id == ViewBag.editProdId)
+                    {
+                        using (Html.BeginForm("editProduct", "Admin", FormMethod.Get))
+                        {
+                            <tr class="selected">
+                                <td>
+                                    <input type="hidden" name="id" value="@obj.Id" />
+                                    @obj.Id
+                                </td>
+                                <td>
+                                    <select name="categoryId" class="sel">
+                                        @foreach (eShop.Models.CategoryModel objCat in ViewBag.Category)
+                                        {
+                                            if (@obj.IdCategory == objCat.Id)
+                                            {
+                                                <option value="@objCat.Id" selected>@objCat.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@objCat.Id">@objCat.Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </td>
+                                <td style="text-align: center;">
+                                    <img src="@obj.Image" style="width: 100px; height: 100px;" />
+                                    <input type="text" name="img" value="@obj.Image" onchange="$(this).prev().attr('src', this.value)" />
+                                </td>
+                                <td>
+                                    <input type="text" name="name" value="@obj.Name" />
+                                </td>
+                                <td>
+                                    @Html.TextArea("description", @obj.Description, 5, 40, null)
+                                </td>
+                                <td>
+                                    <input type="number" name="price" value="@obj.Price" style="width: 80px;" />
+                                </td>
+                                <td>
+                                    @Html.CheckBox("active", @obj.active)
+                                </td>
+                                <td><a href="@Url.Action("characteristic", "Admin", new { id = @obj.Id })">Характеристики</a></td>
+                                <td><input type="submit" value="сохранить" /></td>
+                                <td><a href="@Url.Action("delProduct", "Admin", new { id = @obj.Id })">Удалить</a></td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>@obj.Id</td>
+                            <td>
+                                <input type="hidden" name="catId" value="@obj.IdCategory" />
+                                @obj.NameCategory
+                            </td>
+                            <td><img src="@obj.Image" style="width: 50px; height: 50px;" /></td>
+                            <td>@obj.Name</td>
+                            <td>@obj.Description</td>
+                            <td>@obj.Price</td>
+                            <td>
+                                @Html.CheckBox("active", @obj.active, new { @disabled = false })
+                            </td>
+                            <td><a href="@Url.Action("characteristic", "Admin", new { id = @obj.Id })">Характеристики</a></td>
+                            <td><a href="@Url.Action("getEditProductForm", "Admin", new { id = @obj.Id })">Редактировать</a></td>
+                            <td><a href="@Url.Action("delProduct", "Admin", new { id = @obj.Id })">Удалить</a></td>
+                        </tr>
+                    }
+                }
+
+            </table>
+            @*пейджинг---------------------------------------------------------------------*@
+
+            <div class="pages">
+                <ul>
+                    @if (ViewBag.PCurentPage == 0) //первый
+                    {
+                        if (@ViewBag.PPageCount == 1)
+                        {
+                            <li class="curent"><a href="@Url.Action("Index", "Admin", new { page = 0, tabIndex = 2 })">1</a></li>
+                        }
+                        else if (@ViewBag.PPageCount == 2)
+                        {
+                            <li class="curent"><a href="@Url.Action("Index", "Admin", new { page = 0, tabIndex = 2 })">1</a></li>
+                            <li><a href="@Url.Action("Index", "Admin", new { page = 1, tabIndex = 2 })">2</a></li>
+                        }
+                        else if (@ViewBag.PPageCount == 3)
+                        {
+                            <li class="curent"><a href="@Url.Action("Index", "Admin", new { Opage = 0, tabIndex = 2 })">1</a></li>
+                            <li><a href="@Url.Action("Index", "Admin", new { page = 1, tabIndex = 2 })">2</a></li>
+                            <li><a href="@Url.Action("Index", "Admin", new { page = @ViewBag.PPageCount - 1, tabIndex = 2 })">@ViewBag.PPageCount</a></li>
+                        }
+                        else if (@ViewBag.PPageCount > 3)
+                        {
+                            <li class="curent"><a href="@Url.Action("Index", "Admin", new { page = 0, tabIndex = 2 })">1</a></li>
+                            <li><a href="@Url.Action("Index", "Admin", new { page = 1, tabIndex = 2 })">2</a></li>
+                            <li class="point">. . .</li>
+                            <li><a href="@Url.Action("Index", "Admin", new { page = @ViewBag.PPageCount - 1, tabIndex = 2 })">@ViewBag.PPageCount</a></li>
+                        }
+                    }
+                    @if (ViewBag.PCurentPage == 1) //второй
+                    {
+                        if (@ViewBag.PPageCount == 2)
+                        {
+                            <li><a href="@Url.Action("Index", "Admin", new { page = 0, tabIndex = 2 })">1</a></li>
+                            <li class="curent"><a href="@Url.Action("Index", "Admin", new { page = 1, tabIndex = 2 })">2</a></li>
+                        }
+                        else if (@ViewBag.PPageCount == 3)
+                        {
+                            <li><a href="@Url.Action("Index", "Admin", new { page = 0, tabIndex = 2 })">1</a></li>
+                            <li class="curent"><a href="@Url.Action("Index", "Admin", new { Opage = 1, tabIndex = 2 })">2</a></li>
+                            <li><a href="@Url.Action("Index", "Admin", new { page = @ViewBag.PPageCount - 1, tabIndex = 2 })">@ViewBag.PPageCount</a></li>
+                        }
+                        else if (@ViewBag.PPageCount == 4)
+                        {
+                            <li><a href="@Url.Action("Index", "Admin", new { page = 0, tabIndex = 2 })">1</a></li>
+                            <li class="curent"><a href="@Url.Action("Index", "Admin", new { page = 1, tabIndex = 2 })">2</a></li>
+                            <li><a href="@Url.Action("Index", "Admin", new { page = 2, tabIndex = 2 })">3</a></li>
+                            <li><a href="@Url.Action("Index", "Admin", new { page = 3, tabIndex = 2 })">4</a></li>
+                        }
+                        else if (@ViewBag.PPageCount > 4)
+                        {
+                            <li><a href="@Url.Action("Index", "Admin", new { page = 0, tabIndex = 2 })">1</a></li>
+                            <li class="curent"><a href="@Url.Action("Index", "Admin", new { page = 1, tabIndex = 2 })">2</a></li>
+                            <li><a href="@Url.Action("Index", "Admin", new { page = 2, tabIndex = 2 })">3</a></li>
+                            <li class="point">. . .</li>
+                            <li><a href="@Url.Action("Index", "Admin", new { page = @ViewBag.PPageCount - 1, tabIndex = 2 })">@ViewBag.PPageCount</a></li>
+                        }
+                    }
+                    @if (ViewBag.PCurentPage >= 2 && ViewBag.PCurentPage <= @ViewBag.PPageCount - 3) //серидина
+                    {
+                        <li><a href="@Url.Action("Index", "Admin", new { page = 0, tabIndex = 2 })">1</a></li>
+                        if (ViewBag.PCurentPage > 2)
+                        {
+                            <li class="point">. . .</li>
+                        }
+                        <li><a href="@Url.Action("Index", "Admin", new { page = @ViewBag.PCurentPage - 1, tabIndex = 2 })">@ViewBag.PCurentPage</a></li>
+                        int cur = (int)@ViewBag.PCurentPage + 1;
+                        <li class="curent"><a href="@Url.Action("Index", "Admin", new { page = @ViewBag.PCurentPage, tabIndex = 2 })">@cur</a></li>
+                        int next = (int)@ViewBag.PCurentPage + 2;
+                        <li><a href="@Url.Action("Index", "Admin", new { page = @ViewBag.PCurentPage + 1, tabIndex = 2 })">@next</a></li>
+                        if (@ViewBag.PCurentPage < (@ViewBag.PPageCount - 3))
+                        {
+                            <li class="point">. . .</li>
+                        }
+                        <li><a href="@Url.Action("Index", "Admin", new { page = @ViewBag.PPageCount - 1, tabIndex = 2 })">@ViewBag.PPageCount</a></li>
+                    }
+                    @if (@ViewBag.PCurentPage == @ViewBag.PPageCount - 2 && @ViewBag.PPageCount > 3) //предпоследний
+                    {
+                        <li><a href="@Url.Action("Index", "Admin", new { page = 0, tabIndex = 2 })">1</a></li>
+                        <li class="point">. . .</li>
+                        int last = (int)ViewBag.PPageCount - 2;
+                        if (last != 2)
+                        {
+                            <li><a href="@Url.Action("Index", "Admin", new { page = @ViewBag.PPageCount - 3, tabIndex = 2 })">@last</a></li>
+                        }
+
+                        int cur = (int)ViewBag.PPageCount - 1;
+                        <li class="curent"><a href="@Url.Action("Index", "Admin", new { page = @ViewBag.PPageCount - 2, tabIndex = 2 })">@cur</a></li>
+                        <li><a href="@Url.Action("Index", "Admin", new { page = @ViewBag.PPageCount - 1, tabIndex = 2 })">@ViewBag.PPageCount</a></li>
+                    }
+                    @if (@ViewBag.PCurentPage == @ViewBag.PPageCount - 1 && @ViewBag.PPageCount != 1 && @ViewBag.PPageCount != 2) //последний
+                    {
+                        <li><a href="@Url.Action("Index", "Admin", new { page = 0, tabIndex = 2 })">1</a></li>
+                        if (@ViewBag.PPageCount > 3)
+                        {
+                            <li class="point">. . .</li>
+                        }
+
+                        int last = (int)ViewBag.PPageCount - 1;
+                        <li><a href="@Url.Action("Index", "Admin", new { page = @ViewBag.PPageCount - 2, tabIndex = 2 })">@last</a></li>
+                        <li class="curent"><a href="@Url.Action("Index", "Admin", new { page = @ViewBag.PPageCount - 1, tabIndex = 2 })">@ViewBag.PPageCount</a></li>
+                    }
+                </ul>
+            </div>
+        @*пейджинг---------------------------------------------------------------------*@
+
+            @if (ViewBag.characteristics != null)
+            {
+                int count = 1;
+                var list = (List<eShop.Models.Characteristicscs>)ViewBag.characteristics;
+                if (list.Count() == 0)
+                {
+                    <div class="characteristics">
+                        @using (Html.BeginForm("addCharacteristics", "Admin", FormMethod.Get))
+                        {
+                            <input type="hidden" name="id" value="@ViewBag.editProdId" />
+                            <label>Ширина</label>
+                            <input name="strVal1" type="text" />
+                            <input name="intVal1" type="number" />
+                            <label>Высота</label>
+                            <input name="strVal2" type="text" />
+                            <input name="intVal2" type="number" />
+                            <label>Глубина</label>
+                            <input name="strVal3" type="text" />
+                            <input name="intVal3" type="number" />
+                            <div class="relax"></div>
+                            <input type="submit" value="Сохранить" class="submit" />
+                        }
+                        <span class="close" id="close"><img src="~/public/images/icons/cross.png" /></span>
+                    </div>
+                }
+                else
+                {
+                    <div class="characteristics">
+                        @using (Html.BeginForm("editCharacteristics", "Admin", FormMethod.Get))
+                        {
+                            foreach (eShop.Models.Characteristicscs obj in ViewBag.characteristics)
+                            {
+                                <input type="hidden" name=@("id"+ count) value="@obj.id" />
+                                <label>@obj.Name</label>
+                                <input type="text" name=@("strVal" + count) value="@obj.Value" placeholder="Строковое значение" />
+                                <input type="number" name=@("intVal" +count) value="@obj.IntValue" placeholder="Числовое значение" />
+                                <br />
+                                { count++; }
+                            }
+                            <div class="relax"></div>
+                            <input type="submit" value="Сохранить" class="submit" />
+                            <span class="close" id="close"><img src="~/public/images/icons/cross.png" /></span>
+                            <div class="relax"></div>
+                        }
+                    </div>
+                }
+            }
+
+            <div class="add">
+                <p>Для добавления изображения нового товара необходимо залить картинку по FTP в каталог public/images/pictures</p>
+                @using (Html.BeginForm("addProduct", "Admin", FormMethod.Get))
+                {
+                    <label for="cat">Категория</label>
+                    <br />
+                    <select name="cat" class="sel">
+                        @foreach (eShop.Models.CategoryModel obj in ViewBag.Category)
+                        {
+                            <option value="@obj.Id">@obj.Name</option>
+                        }
+                    </select>
+                    <br />
+                    <label for="name">Имя</label>
+                    <br />
+                    <input type="text" name="name" />
+                    <br />
+                    <label for="price">Цена</label>
+                    <br />
+                    <input type="text" name="price" />
+                    <br />
+                    <label for="description">Описание</label>
+                    <br />
+                    <textarea rows="10" cols="45" name="description"></textarea>
+                    <br />
+                    <label for="img">Имя картинки</label>
+                    <br />
+                    <input type="text" name="img" />
+                    <br />
+                    <label>Активный</label>
+                    <br />
+                    @Html.CheckBox("active")
+                    <br />
+                    <input type="submit" value="Добавить" />
+                }
+            </div>
+        </article>
+                @*/Товары--------------------------------------------------------------------------*@
+
+
+                @*Категория--------------------------------------------------------------------------*@
+        <article id="tab3" class="@(activetabId == "tab3"?"active": "hide")">
+            <h3>Категории</h3>
+            <table>
+                <tr>
+                    <th>Ид</th>
+                    <th>Название категории</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                @foreach (eShop.Models.CategoryModel obj in ViewBag.Category)
+                {
+                    if (ViewBag.editCatId != null && @obj.Id == ViewBag.editCatId)
+                    {
+                        using (Html.BeginForm("editCategory", "Admin", FormMethod.Get))
+                        {
+                            <tr>
+                                <td><input name="id" type="hidden" value="@obj.Id">@obj.Id</td>
+                                <td><input type="text" name="name" value="@obj.Name"></td>
+                                <td><input type="submit" value="Сохранить"></td>
+                                <td><a href="@Url.Action("delCategory", "Admin", new {id = @obj.Id})">Удалить</a></td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>@obj.Id</td>
+                            <td>@obj.Name</td>
+                            <td><a href="@Url.Action("editCat", "Admin", new {id = @obj.Id})">Редактировать</a></td>
+                            <td><a href="@Url.Action("delCategory", "Admin", new {id = @obj.Id})">Удалить</a></td>
+                        </tr>
+                    }
+                }
+            </table>
+            <div class="add">
+                <h3>Добаввить новую категорию</h3>
+                @using (Html.BeginForm("addCategory", "Admin", FormMethod.Post))
+                {
+                    <label for="name">Имя</label>
+                    <input type="text" name="cat" />
+                    <br />
+                    <input type="submit" value="Добавить" />
+                }
+           </div>
+       </article>
+   @*/Категория--------------------------------------------------------------------------*@
+</section>
+<div class="relax"></div>

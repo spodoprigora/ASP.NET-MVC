@@ -1,0 +1,6 @@
+﻿@model IEnumerable<eShop.Models.CategoryModel>
+
+@foreach (eShop.Models.CategoryModel Category in Model)
+{
+    <li><span>@Category.Id</span><a href="@Url.Action("CategoryProduct", "", new {id = @Category.Id})">@Category.Name</a></li>
+}

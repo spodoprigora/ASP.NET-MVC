@@ -1,0 +1,88 @@
+﻿@{
+    ViewBag.Title = "Profil";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="user">
+    @if (@ViewBag.edit == true)
+    {
+        using (Html.BeginForm("Profil", "Home", FormMethod.Get))
+        {
+
+            <input name="id" type="hidden" value="@ViewBag.userInfo.Id" />
+            <div>
+                <label>Email</label>
+                <input name="email" type="email" value="@ViewBag.userInfo.Email" />
+            </div>
+            <div>
+                <label>Телефон</label>
+                <input name="tel" type="tel" value="@ViewBag.userInfo.PhoneNumber" />
+            </div>
+            <div>
+                <label>Имя</label>
+                <input name="name" type="text" value="@ViewBag.userInfo.Name" />
+            </div>
+            <div>
+                <label>Фамилия</label>
+                <input name="firstName" type="text" value="@ViewBag.userInfo.FirstName" />
+            </div>
+            <div>
+                <label>Адресс</label>
+                <textarea name="adress">@ViewBag.userInfo.Adress</textarea>
+            </div>
+           
+            <input class="send" type="submit" value="Сохранить" />
+        }
+    }
+    else
+    {
+        <h2>@ViewBag.userInfo.Name @ViewBag.userInfo.FirstName</h2>
+        <h4>Email: @ViewBag.userInfo.Email</h4>
+        <h4>Телефон: @ViewBag.userInfo.PhoneNumber</h4>
+        <h5>Адресс: @ViewBag.userInfo.Adress</h5>
+    //    <a href="@Url.Action("Profil", "Home", new { edit = "true"})">Редактировать</a>
+    }
+</div>
+<div class="history">
+
+    @foreach (eShop.Models.OrderList Order in ViewBag.Details)
+    {
+        <div class="order">
+            <h3>Заказ номер @Order.Id</h3>
+            <h3>Дата @Order.Orderdate</h3>
+            <h5>Сумма заказа @Order.Price</h5>
+            <h6>Статус @Order.Status</h6>
+            <div class="detail">
+                <table class="products">
+                    <tr>
+                        <th>
+                            <p>Фото</p>
+                        </th>
+                        <th>
+                            <p>Название</p>
+                        </th>
+                        <th>
+                            <p>Цена</p>
+                        </th>
+                        <th>
+                            <p>Коичество</p>
+                        </th>
+                        <th>
+                            <p>Сумма</p>
+                        </th>
+                    </tr>
+                    @foreach (var Details in Order.Descriptions)
+                    {
+                        <tr class="prod">
+                            <td><img src="@Details.image" alt="@Details.name" width="90" /></td>
+                            <td class="prodName">@Details.name</td>
+                            <td>@Details.price грн.</td>
+                            <td>@Details.count</td>
+                            <td>@(Details.price * Details.count) грн.</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    }
+</div>

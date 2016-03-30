@@ -1,0 +1,206 @@
+﻿@model  eShop.Models.GlobalModel
+@{
+    ViewBag.Title = "Home Page";
+    var categorys = Model.Categorys;
+    var products = Model.Products;
+}
+
+@section Products{
+    @foreach (eShop.Models.Product Product in products)
+    {
+        <li>
+            <img src="@Product.Image" alt="@Product.Name" width="300" />
+            <h4><a href="@Url.Action("Index", "Product", new {id = @Product.Id})">@Product.Name</a></h4>
+            <p>Код товара: @Product.Id</p>
+            <p>Доступность: 3 - 4 недели</p>
+            <p class="price">Цена: @Product.Price UA</p>
+            <a href="@Url.Action("Index", "Product", new {id = @Product.Id})" class="more">Показать больше</a>
+        </li>
+    }
+}
+
+@section mainText{
+    <p>Итальянская мебель для вашего дома от компании ERGOSYSTEM</p>
+    <p>
+        Наш магазин реализует <span>итальянскую мебель</span>, потому что она поражает своим стилем оформления, восхищает удобством и славится высочайшим качеством.
+        <span>Итальянская мебель</span> удовлетворит запросы самых изыскательных покупателей. Оригинально и продуманно оформленная, она представляют собой произведения
+        мебельного искусства, которые радуют своего обладателя на протяжении очень долгого времени. Долгий срок службы <span>итальянской мебели</span> – это следствие высокого
+        качества материалов, использующихся при создании мебели, тщательного подбора фурнитуры и мастерской сборки. Каждая деталь в <span>итальянской мебели</span> совершенна!
+    </p>
+}
+
+@section breadcrumbs{
+    <div class="breadcrumbs">
+        <ul>
+            <li><a href="@Url.Action("", "Home")">Главная</a></li>
+            @if (ViewBag.category != null)
+            {
+                <li><a href="@Url.Action("", "Home", new { id = @ViewBag.category.Id })">@ViewBag.category.Name</a></li>
+            }
+        </ul>
+    </div>
+}
+
+@section pages{
+    <div class="pages">
+        <ul>
+            @if (@ViewBag.CurentPage == 0) //первый
+            {
+                if (@ViewBag.Pages == 1)
+                {
+                    <li class="curent"><a href="@Url.Action("Pages", "Home", new { id = 0 })">1</a></li>
+                }
+                else if (@ViewBag.Pages == 2)
+                {
+                    <li class="curent"><a href="@Url.Action("Pages", "Home", new { id = 0 })">1</a></li>
+                    <li><a href="@Url.Action("Pages", "Home", new { id = 1 })">2</a></li>
+                }
+                else if (@ViewBag.Pages == 3)
+                {
+                    <li class="curent"><a href="@Url.Action("Pages", "Home", new { id = 0 })">1</a></li>
+                    <li><a href="@Url.Action("Pages", "Home", new { id = 1 })">2</a></li>
+                    <li><a href="@Url.Action("Pages", "Home", new { id = @ViewBag.Pages-1 })">@ViewBag.Pages</a></li>
+                }
+                else if (@ViewBag.Pages > 3)
+                {
+                    <li class="curent"><a href="@Url.Action("Pages", "Home", new { id = 0 })">1</a></li>
+                    <li><a href="@Url.Action("Pages", "Home", new { id = 1 })">2</a></li>
+                    <li class="point">. . .</li>
+                    <li><a href="@Url.Action("Pages", "Home", new { id = @ViewBag.Pages-1 })">@ViewBag.Pages</a></li>
+                }
+            }
+            @if (@ViewBag.CurentPage == 1) //второй
+            {
+                if (@ViewBag.Pages == 2)
+                {
+                    <li><a href="@Url.Action("Pages", "Home", new { id = 0 })">1</a></li>
+                    <li class="curent"><a href="@Url.Action("Pages", "Home", new { id = 1 })">2</a></li>
+                }
+                else if (@ViewBag.Pages == 3)
+                {
+                    <li><a href="@Url.Action("Pages", "Home", new { id = 0 })">1</a></li>
+                    <li class="curent"><a href="@Url.Action("Pages", "Home", new { id = 1 })">2</a></li>
+                    <li><a href="@Url.Action("Pages", "Home", new { id = @ViewBag.Pages-1 })">@ViewBag.Pages</a></li>
+                }
+                else if (@ViewBag.Pages == 4)
+                {
+                    <li><a href="@Url.Action("Pages", "Home", new { id = 0 })">1</a></li>
+                    <li class="curent"><a href="@Url.Action("Pages", "Home", new { id = 1 })">2</a></li>
+                    <li><a href="@Url.Action("Pages", "Home", new { id = 2 })">3</a></li>
+                    <li><a href="@Url.Action("Pages", "Home", new { id = 3 })">4</a></li>
+                }
+                else if (@ViewBag.Pages > 4)
+                {
+                    <li><a href="@Url.Action("Pages", "Home", new { id = 0 })">1</a></li>
+                    <li class="curent"><a href="@Url.Action("Pages", "Home", new { id = 1 })">2</a></li>
+                    <li><a href="@Url.Action("Pages", "Home", new { id = 2 })">3</a></li>
+                    <li class="point">. . .</li>
+                    <li><a href="@Url.Action("Pages", "Home", new { id = @ViewBag.Pages-1 })">@ViewBag.Pages</a></li>
+                }
+            }
+            @if (@ViewBag.CurentPage >= 2 && @ViewBag.CurentPage <= @ViewBag.Pages - 3) //серидина
+            {
+                <li><a href="@Url.Action("Pages", "Home", new { id = 0 })">1</a></li>
+                if (@ViewBag.CurentPage > 2)
+                {
+                    <li class="point">. . .</li>
+                }
+                <li><a href="@Url.Action("Pages", "Home", new { id = @ViewBag.CurentPage-1 })">@ViewBag.CurentPage</a></li>
+                int cur = (int)@ViewBag.CurentPage + 1;
+                <li class="curent"><a href="@Url.Action("Pages", "Home", new { id = @ViewBag.CurentPage})">@cur</a></li>
+                int next = (int)@ViewBag.CurentPage + 2;
+                <li><a href="@Url.Action("Pages", "Home", new { id = @ViewBag.CurentPage+1 })">@next</a></li>
+                if (@ViewBag.CurentPage < (@ViewBag.Pages - 3))
+                {
+                    <li class="point">. . .</li>
+                }
+                <li><a href="@Url.Action("Pages", "Home", new { id = @ViewBag.Pages-1 })">@ViewBag.Pages</a></li>
+            }
+            @if (@ViewBag.CurentPage == @ViewBag.Pages - 2 && @ViewBag.Pages > 3) //предпоследний
+            {
+                <li><a href="@Url.Action("Pages", "Home", new { id = 0 })">1</a></li>
+                <li class="point">. . .</li>
+                int last = (int)ViewBag.Pages - 2;
+                if (last != 2)
+                {
+                    <li><a href="@Url.Action("Pages", "Home", new { id = @ViewBag.Pages - 3 })">@last</a></li>
+                }
+
+                int cur = (int)ViewBag.Pages - 1;
+                <li class="curent"><a href="@Url.Action("Pages", "Home", new { id = @ViewBag.Pages - 2 })">@cur</a></li>
+                <li><a href="@Url.Action("Pages", "Home", new { id = @ViewBag.Pages-1 })">@ViewBag.Pages</a></li>
+            }
+            @if (@ViewBag.CurentPage == @ViewBag.Pages - 1 && @ViewBag.Pages != 1 && @ViewBag.Pages != 2) //последний
+            {
+                <li><a href="@Url.Action("Pages", "Home", new { id = 0 })">1</a></li>
+                if (@ViewBag.Pages > 3)
+                {
+                    <li class="point">. . .</li>
+                }
+
+                int last = (int)ViewBag.Pages - 1;
+                <li><a href="@Url.Action("Pages", "Home", new { id = @ViewBag.Pages - 2 })">@last</a></li>
+                <li class="curent"><a href="@Url.Action("Pages", "Home", new { id = @ViewBag.Pages-1 })">@ViewBag.Pages</a></li>
+            }
+        </ul>
+</div>
+}
+
+@section filtr{
+    @if(@ViewBag.filter==1)
+    {
+        if (@ViewBag.target =="up"){
+            <a class="filtr activ up" href="@Url.Action("", "filtr", new {id =1 })">ЦЕНА</a>
+        }
+        else { 
+            <a class="filtr activ down" href="@Url.Action("", "filtr", new {id =1 })">ЦЕНА</a>
+        }
+    }
+    else{
+        <a class="filtr" href="@Url.Action("", "filtr", new {id =1 })">ЦЕНА</a>
+    }
+    
+     @if (@ViewBag.filter == 2)
+     {
+        if (@ViewBag.target == "up"){
+            <a class="filtr  activ up" href="@Url.Action("", "filtr", new { id = 2 })">ВЫСОТА</a>
+        }
+        else { 
+             <a class="filtr  activ down" href="@Url.Action("", "filtr", new { id = 2 })">ВЫСОТА</a>
+        }
+     }
+     else
+     {
+        <a class="filtr" href="@Url.Action("", "filtr", new { id = 2 })">ВЫСОТА</a>
+    }
+    
+     @if (@ViewBag.filter == 3)
+     {
+        if (@ViewBag.target == "up"){
+            <a class="filtr  activ up" href="@Url.Action("", "filtr", new { id = 3 })">ШИРИНА</a>
+        }
+        else { 
+            <a class="filtr  activ down" href="@Url.Action("", "filtr", new { id = 3 })">ШИРИНА</a>
+        }
+     }
+     else
+     {
+        <a class="filtr" href="@Url.Action("", "filtr", new { id = 3 })">ШИРИНА</a>
+    }
+     
+    @if (@ViewBag.filter == 4)
+     {
+        if (@ViewBag.target == "up"){
+            <a class="filtr  activ up" href="@Url.Action("", "filtr", new { id = 4 })">ГЛУБИНА</a>
+        }
+        else { 
+            <a class="filtr  activ down" href="@Url.Action("", "filtr", new { id = 4 })">ГЛУБИНА</a>
+        }
+     }
+     else
+     {
+        <a class="filtr" href="@Url.Action("", "filtr", new { id = 4 })">ГЛУБИНА</a>
+    }
+
+    <a class="filtr" href="@Url.Action("", "filtr", new { id = 0 })">Сбросить фильтр</a>
+}

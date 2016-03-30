@@ -1,0 +1,101 @@
+﻿@using Microsoft.AspNet.Identity
+
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title – Ergosystem</title>
+
+    <link href="~/public/css/main.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="~/public/js/jquery.js"></script>
+    <script type="text/javascript" src="~/public/js/main.js"></script>
+
+</head>
+<body>
+    <!-- Page -->
+    <div id="page">
+
+        <!-- Header -->
+        <div id="header">
+            <div class="main">
+                <div class="logo">
+                    <h1><a href="@Url.Action("", "Home")"><img src="~/public/images/logotype.gif" alt="Ergosystem" /></a></h1>
+                </div>
+
+                <div class="social">
+                    @{Html.RenderAction("Count", "Home");}
+
+                    <ul>
+                        <li><a href="@Url.Action("", "BAsket")"><img src="~/public/images/icons/basket.png" alt="Basket" /></a></li>
+                    </ul>
+                </div>
+                <div class="menu">
+                    @if (Request.IsAuthenticated)
+                    {
+                        using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                        {
+                            <ul>
+                                @Html.AntiForgeryToken()
+                                <li class="first"><a href="@Url.Action("", "Home")">Главная</a></li>
+                                <li><a href="#">About Us</a></li>
+                                <li><a href="#">Furniture</a></li>
+                                <li><a href="#">Office Fitouts</a></li>
+                                <li>
+                                    @Html.ActionLink("Здравствуйте, " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+                                </li>
+                                <li><a href="javascript:document.getElementById('logoutForm').submit()">Выйти</a></li>
+                            </ul>
+                        }
+                    }
+                    else
+                    {
+                        <ul>
+                            <li><a href="@Url.Action("", "Home")">Главная</a></li>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Furniture</a></li>
+                            <li><a href="#">Office Fitouts</a></li>
+                            <li>@Html.ActionLink("Регистрация", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+                            <li>@Html.ActionLink("Выполнить вход", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+                        </ul>
+                    }
+
+                </div>
+
+            </div>
+            <div class="relax">&nbsp;</div>
+        </div>
+
+        <!-- Content -->
+
+        <div id="content">
+            <div class="main">
+                
+                
+                    @RenderBody()
+                  
+           
+           
+                   
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div id="footer">
+            <div class="bottom-bg">
+                <div class="main">
+                    <ul>
+                        <li><a href="#">Service 1</a></li>
+                        <li><a href="#">Service 2</a></li>
+                        <li><a href="#">Service 3</a></li>
+                        <li><a href="#">Service 4</a></li>
+                        <li><a href="#">Service 5</a></li>
+                    </ul>
+                    <p>Copyright &copy;  2016 - All rights reserved - <a href="#">Website Design Company</a> - <a href="#">SEO Company</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    @RenderSection("Scripts", false)
+</body>
+</html>

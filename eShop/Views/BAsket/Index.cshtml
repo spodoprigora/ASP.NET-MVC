@@ -1,0 +1,52 @@
+﻿@model     IEnumerable<KeyValuePair<eShop.Models.Product, int>>
+ @{
+    ViewBag.Title = "Index";
+}
+@if (Model.Any())
+{
+    <table class="products">
+        <tr>
+            <th>
+                <p>Фото</p>
+            </th>
+            <th>
+                <p>Название</p>
+            </th>
+            <th>
+                <p>Цена</p>
+            </th>
+            <th>
+                <p>Коичество</p>
+            </th>
+            <th>
+                <p>Сумма</p>
+            </th>
+            <th>
+                <p>Удалить</p>
+            </th>
+        </tr>
+        @foreach (var Product in Model)
+        {
+            <tr>
+                <td><img src="@Product.Key.Image" alt="@Product.Key.Name" width="90"/></td>
+                <td class="prodName"><a href="@Url.Action("Index", "Product", new {id = @Product.Key.Id})">@Product.Key.Name</a></td>
+                <td>@Product.Key.Price грн.</td>
+                <td>@Product.Value</td>
+                <td>@(Product.Key.Price*Product.Value) шт.</td>
+                <td>
+                    <a href="@Url.Action("dell", "BAsket", new {id = @Product.Key.Id})">
+                        <img src="~/public/images/icons/del.png"/>
+                    </a>
+                </td>
+            </tr>
+        }
+    </table>
+    <div class="summa">
+        <h5>Cумма вашего заказа @ViewBag.Summa грн.</h5>
+        <a href="@Url.Action("CreateOrder", "BAsket")">Оформить заказ</a>
+    </div>
+}
+else
+{
+    <h3 class="empty">Ваша корзина пуста</h3>
+}

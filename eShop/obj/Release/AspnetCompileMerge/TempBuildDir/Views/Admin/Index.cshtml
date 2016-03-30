@@ -1,0 +1,398 @@
+﻿@model  List<eShop.Models.getOrderList>
+            
+    @{
+        ViewBag.Title = "Admin";
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    }
+
+
+
+    @{
+    var activetabId = string.Empty;
+    var activelinkIndex = default(int);
+    switch ((int)ViewBag.TabIndex)
+    {
+
+        case 1:
+        default:
+            activelinkIndex = 0;
+            activetabId = "tab1";
+            break;
+        case 2:
+            activelinkIndex = 1;
+            activetabId = "tab2";
+            break;
+
+        case 3:
+            activelinkIndex = 2;
+            activetabId = "tab3";
+            break;
+
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+    <h2>ADMIN</h2>
+
+
+    <ul class="tabs">
+        <li><a href="#tab1">ЗАКАЗЫ</a></li>
+        <li><a href="#tab2">ТОВАРЫ</a></li>
+        <li><a href="#tab3">КАТЕГОРИИ</a></li>
+    </ul>
+    <div class="relax"></div>
+    <section class="block">
+        <article id="tab1" class="@(activetabId == "tab1"?"active": "hide")">
+            @*Заказы--------------------------------------------------------------------------*@
+            <h3>Заказы</h3>
+            <table>
+                <tr>
+                    <th>№</th>
+                    <th>Имя</th>
+                    <th>Телефон</th>
+                    <th>Дата заказа</th>
+                    <th>Статус</th>
+                    <th>Изменен</th>
+                    <th>Стоимость</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+
+                @foreach (eShop.Models.getOrderList Order in Model)
+            {
+                int count = 1;
+
+                if (ViewBag.selectId != null && ViewBag.selectId == @Order.Id)
+                {
+
+                    <tr class="selected">
+                        <td>@Order.Id</td>
+                        <td>@Order.Name</td>
+                        <td>@Order.Tell</td>
+
+                        <td>@Order.Orderdate</td>
+                        <td>
+                            @using (Html.BeginForm("Status", "Admin", FormMethod.Get))
+                            {
+                                <select name="status" class="sel" onchange="this.form.submit()">
+                                    @foreach (string str in ViewBag.status)
+                                    {
+                                        if (@str == @Order.Status)
+                                        {
+                                            <option value="@count" selected>@str</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@count">@str</option>
+                                        }
+                                        count++;
+                                    }
+                                </select>
+                                <input type="hidden" name="id" value="@Order.Id" />
+                            }
+                        </td>
+                        <td>@Order.ChangeStatusDate</td>
+                        <td>@Order.Price</td>
+                        <td><a href="@Url.Action("Index", "Admin", new {id = @Order.Id})">Больше</a></td>
+                        <td>Редактировать</td>
+                        <td>Удалить</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>@Order.Id</td>
+                        <td>@Order.Name</td>
+                        <td>@Order.Tell</td>
+                        <td>@Order.Orderdate</td>
+                        <td>
+                            @using (Html.BeginForm("Status", "Admin", FormMethod.Get))
+                            {
+                                <select name="status" class="sel" onchange="this.form.submit()">
+                                    @foreach (string str in ViewBag.status)
+                                    {
+                                        if (@str == @Order.Status)
+                                        {
+                                            <option value="@count" selected>@str</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@count">@str</option>
+                                        }
+                                        count++;
+                                    }
+                                </select>
+                                <input type="hidden" name="id" value="@Order.Id" />
+                            }
+                        </td>
+                        <td>@Order.ChangeStatusDate</td>
+                        <td>@Order.Price</td>
+                        <td><a href="@Url.Action("Index", "Admin", new {id = @Order.Id})">Больше</a></td>
+                        <td>Редактировать</td>
+                        <td>Удалить</td>
+                    </tr>
+
+                }
+
+
+
+            }
+            </table>
+            @*/Заказы--------------------------------------------------------------------------*@
+
+            @*Товары--------------------------------------------------------------------------*@
+        </article>
+        <article id="tab2" class="@(activetabId == "tab2"?"active": "hide")">
+            <h3>Товары</h3>
+            <table>
+                <tr>
+                    <th>Ид</th>
+                    <th>Категория</th>
+                    <th>Фото</th>
+                    <th>Название</th>
+                    <th>Описание</th>
+                    <th>Цена</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                @foreach (eShop.Models.editProduct obj in ViewBag.editProducts)
+                {
+                    if (ViewBag.editProdId != null && obj.Id == ViewBag.editProdId)
+                    {
+                        using (Html.BeginForm("editProduct", "Admin", FormMethod.Get))
+                        {
+                            <tr class="selected">
+                                <td>
+                                    <input type="hidden" name="id" value="@obj.Id" />
+                                    @obj.Id
+                                </td>
+                                <td>
+                                    <select name="categoryId" class="sel">
+                                        @foreach (eShop.Models.CategoryModel objCat in ViewBag.Category)
+                                        {
+                                            if (@obj.IdCategory == objCat.Id)
+                                            {
+                                                <option value="@objCat.Id" selected>@objCat.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@objCat.Id">@objCat.Name</option>
+                                            }
+                                        }
+                                    </select>
+
+                                </td>
+
+                                <td>
+                                    <input type="hidden" name="img" value="@obj.Image" onchange="remove(this.value);" />
+                                    <img src="@obj.Image" style="width: 50px; height: 50px;" />
+                                </td>
+                                <td>
+                                    <input type="text" name="name" value="@obj.Name" />
+                                </td>
+                                <td>
+                                    @Html.TextArea("description", @obj.Description, 5, 40, null)
+                                </td>
+                                <td>
+                                    <input type="text" name="price" value="@obj.Price" />
+                                </td>
+                                <td><a href="@Url.Action("characteristic", "Admin", new { id = @obj.Id })">Характеристики</a></td>
+                                <td><input type="submit" value="сохранить" /></td>
+                                <td><a href="@Url.Action("delProduct", "Admin", new { id = @obj.Id })">Удалить</a></td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>@obj.Id</td>
+                            <td>
+                                <input type="hidden" name="catId" value="@obj.IdCategory" />
+                                @obj.NameCategory
+                            </td>
+                            <td><img src="@obj.Image" style="width: 50px; height: 50px;" /></td>
+                            <td>@obj.Name</td>
+                            <td>@obj.Description</td>
+                            <td>@obj.Price</td>
+                            <td><a href="@Url.Action("characteristic", "Admin", new { id = @obj.Id })">Характеристики</a></td>
+                            <td><a href="@Url.Action("getEditProductForm", "Admin", new { id = @obj.Id })">Редактировать</a></td>
+                            <td><a href="@Url.Action("delProduct", "Admin", new { id = @obj.Id })">Удалить</a></td>
+                        </tr>
+                    }
+
+
+                }
+
+            </table>
+
+            @if (ViewBag.characteristics != null)
+            {
+                <div class="characteristics">
+
+                    @foreach (eShop.Models.Characteristicscs obj in ViewBag.characteristics)
+                    {
+                        using (Html.BeginForm("editCharacteristics", "Admin", FormMethod.Get))
+                        {
+                            <input type="hidden" name="id" value="@obj.id" />
+                            <label>@obj.Name</label>
+                            <input type="text" name="strVal" value="@obj.Value" />
+                            <input type="text" name="intVal" value="@obj.IntValue" />
+                            <input type="submit" value="изменить" />
+                            <br />
+                        }
+
+                    }
+                </div>
+            }
+
+
+            <p>Для добавления изображения нового товара необходимо залить картинку по FTP в каталог public/images/pictures</p>
+            @using (Html.BeginForm("addProduct", "Admin", FormMethod.Get))
+            {
+                <label for="cat">Категория</label>
+                <br />
+                <select name="cat" class="sel">
+                    @foreach (eShop.Models.CategoryModel obj in ViewBag.Category)
+                    {
+                        <option value="@obj.Id">@obj.Name</option>
+                    }
+                </select>
+                <br />
+                <label for="name">Имя</label>
+                <br />
+                <input type="text" name="name" />
+                <br />
+                <label for="price">Цена</label>
+                <br />
+                <input type="text" name="price" />
+                <br />
+                <label for="description">Описание</label>
+                <br />
+                <textarea rows="10" cols="45" name="description"></textarea>
+                <br />
+                <label for="img">Имя картинки</label>
+                <br />
+                <input type="text" name="img" />
+                <br />
+                <input type="submit" value="Добавить" />
+            }
+        </article>
+
+                @*/Товары--------------------------------------------------------------------------*@
+
+
+                @*Категория--------------------------------------------------------------------------*@
+        <article id="tab3" class="@(activetabId == "tab3"?"active": "hide")">
+            <h3>Категории</h3>
+
+            <table>
+                <tr>
+                    <th>Ид</th>
+                    <th>Название категории</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                @foreach (eShop.Models.CategoryModel obj in ViewBag.Category)
+                {
+                    var a = ViewBag.editCatId;
+                    if (ViewBag.editCatId != null && @obj.Id == ViewBag.editCatId)
+                    {
+                        using (Html.BeginForm("editCategory", "Admin", FormMethod.Get))
+                        {
+                            <tr>
+                                <td><input type="text" name="id" value="@obj.Id" /></td>
+                                <td><input type="text" name="name" value="@obj.Name"></td>
+                                <td>
+                                    <input type="submit">
+                                    <a href="@Url.Action("editCategory", "Admin", new {id = @obj.Id})">Редактировать</a>
+                                </td>
+                                <td><a href="@Url.Action("delCategory", "Admin", new {id = @obj.Id})">Удалить</a></td>
+                            </tr>
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>@obj.Id</td>
+                            <td>@obj.Name</td>
+                            <td><a href="@Url.Action("editCat", "Admin", new {id = @obj.Id})">Редактировать</a></td>
+                            <td><a href="@Url.Action("delCategory", "Admin", new {id = @obj.Id})">Удалить</a></td>
+                        </tr>
+                    }
+
+                }
+
+            </table>
+
+            <h3>Добаввить новую категорию</h3>
+            @using (Html.BeginForm("addCategory", "Admin", FormMethod.Get))
+            {
+                <label for="name">Имя</label>
+                <input type="text" name="cat" />
+                <br />
+                <input type="submit" value="Добавить" />
+            }
+
+        </article>
+                @*/Категория--------------------------------------------------------------------------*@
+
+</section>
+
+    <div class="relax"></div>
+
+
+                @if (ViewBag.Details != null)
+{
+    <div class="detail">
+        <table class="products">
+            <tr>
+                <th>
+                    <p>Фото</p>
+                </th>
+                <th>
+                    <p>Название</p>
+                </th>
+                <th>
+                    <p>Цена</p>
+                </th>
+                <th>
+                    <p>Коичество</p>
+                </th>
+                <th>
+                    <p>Сумма</p>
+                </th>
+
+            </tr>
+
+                @foreach (var Product in ViewBag.Details)
+            {
+                <tr class="prod">
+                    <td><img src="@Product.image" alt="@Product.name" width="90" /></td>
+                    <td class="prodName">@Product.name</td>
+                    <td>@Product.price грн.</td>
+                    <td>@Product.count</td>
+                    <td>@(Product.price * Product.count) грн.</td>
+                </tr>
+            }
+        </table>
+
+        <div class="summa">
+            <h5>Cумма вашего заказа @ViewBag.Sum грн.</h5>
+
+        </div>
+    </div>
+}
+

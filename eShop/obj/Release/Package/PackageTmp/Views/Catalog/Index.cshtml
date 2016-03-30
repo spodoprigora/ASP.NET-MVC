@@ -1,0 +1,11 @@
+﻿@model IEnumerable<eShop.Models.CategoryModel>
+@{int count = 1;}
+
+@foreach (eShop.Models.CategoryModel Category in Model)
+{
+    <li>
+        <span>@count</span>
+        <a href="@Url.Action("CategoryProduct", "", new { id = @Category.Id })">@Category.Name</a>
+    </li>
+    { count = count+1;}
+}
